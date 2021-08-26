@@ -15,17 +15,23 @@ header {
     color: white;
     text-align: center;
     border-bottom: 5px solid lightsalmon;
-    padding: 10px;
+    padding: 1%;
 }
 section {
-  padding: 10px 3%;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
 }
 .card {
     background-color: mistyrose;
-    flex-basis: 180px;
-    height: 19vh;
-    margin: 10px;
-    
+    width: 20%;
+    height: 20vh;
+    margin: 1.5%;
+}
+.card img {
+    position: absolute;
+}
+.flipped .back {
+    display: none;
 }
