@@ -36,12 +36,12 @@ section {
     cursor: pointer;
     transform:scale(1);
     transform-style: preserve-3d;
-    transition: 0.5s;
+    transition: 0.2s;
 }
 .card:active {
     transform: scale(0.97);
 }
-.flipped{
+.flipped {
     transform: rotateY(180deg);
     transition: 0.5s
 }
