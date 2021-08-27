@@ -1,4 +1,9 @@
 const cards = document.querySelectorAll('.card');
+const elWin = document.querySelector('.win');
+const elBoard = document.querySelector('.board');
+
+const couplesCount = cards.length/2;
+let flippedCouplesCount = 0;
 
 const shuffle = (() => {
     cards.forEach(card => {
@@ -8,8 +13,8 @@ const shuffle = (() => {
     })
 })()
 
-let soundCorrect = new Audio('sounds/correct.mp3');
-let soundUnflip = new Audio('sounds/unflip.mp3');
+const soundCorrect = new Audio('sounds/correct.mp3');
+const soundUnflip = new Audio('sounds/unflip.mp3');
 
 let isFlippedCard = true;
 let lockBoard = false;
@@ -46,9 +51,15 @@ const checkForMatch = () => {
 const disableCards = () => {
     firstCard.removeEventListener('click', flipCard);
     secondCard.removeEventListener('click', flipCard);
-
+    
     soundCorrect.play();
     resetBoard();
+    flippedCouplesCount++;
+    if (couplesCount === flippedCouplesCount){
+        console.log('You win');
+        elWin.style.visibility = 'visible';
+        elBoard.classList.toggle('transperent');
+    }
 }
 
 // Wrong couple flipped, unflip.
@@ -69,5 +80,20 @@ const unflipCards = () => {
 const resetBoard = () => {
     [isFlippedCard, lockBoard] = [true, false];
     [firstCard, secondCard] = [null, null];
+}
+
+const playAgain = () => {
+    cards.forEach(card => {
+        let randomPos = Math.floor(Math.random() *12);
+        card.style.order = randomPos;
+        card.addEventListener('click', flipCard);
+        if (card.classList.contains('flipped')) {
+            card.classList.toggle('flipped');
+            card.classList.toggle('face-down');
+        }
+        elWin.style.visibility = 'hidden';
+        elBoard.classList.remove('transperent');
+        flippedCouplesCount = 0;
+    })
 }
 

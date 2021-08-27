@@ -12,7 +12,7 @@
         <h1>Memory Game</h1>
     </header>
 
-    <section>
+    <section class="board">
         <div class="card face-down" data-mark="1">
             <img class="front"src="images/html5.svg" alt="1">
             <img class="back" src="images/backbone.svg" alt="Logo">
@@ -62,6 +62,11 @@
             <img class="back" src="images/backbone.svg" alt="Logo">
         </div>
     </section>
+
+    <div class="win">
+        <h1>You Win</h1>
+        <button type="button" class="" onclick="playAgain()">Play Again</button>
+    </div>
 
     <script src="app.js"></script>
 </body>
