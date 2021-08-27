@@ -8,7 +8,8 @@ const shuffle = (() => {
     })
 })()
 
-// cards.forEach(card => card.addEventListener('click', flipCard));
+let soundCorrect = new Audio('sounds/correct.mp3');
+let soundUnflip = new Audio('sounds/unflip.mp3');
 
 let isFlippedCard = true;
 let lockBoard = false;
@@ -45,6 +46,9 @@ const checkForMatch = () => {
 const disableCards = () => {
     firstCard.removeEventListener('click', flipCard);
     secondCard.removeEventListener('click', flipCard);
+
+    soundCorrect.play();
+    resetBoard();
 }
 
 // Wrong couple flipped, unflip.
@@ -57,8 +61,13 @@ const unflipCards = () => {
         secondCard.classList.toggle('flipped');
         secondCard.classList.toggle('face-down');
 
-        lockBoard = false;
+        soundUnflip.play();
+        resetBoard();
     }, 1200)
 }
 
+const resetBoard = () => {
+    [isFlippedCard, lockBoard] = [true, false];
+    [firstCard, secondCard] = [null, null];
+}
 
