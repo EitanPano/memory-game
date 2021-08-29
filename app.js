@@ -8,7 +8,6 @@ let elPlayerName = document.querySelector('.p-name');
 let elPlayerTime = document.querySelector('.p-time');
 let lastPlayer;
 let lastBestTime;
-let BestAllTimePlayer;
 let elInput = document.querySelector('#name-input');
 
 const couplesCount = cards.length / 2;
@@ -45,9 +44,9 @@ const LoadLastPlayer = (() => {
         elPlayerName.innerText = lastPlayer;
         elInput.value = lastPlayer;
     }
-    if (localStorage.getItem('best_score') != null) {
-        BestAllTimePlayer = localStorage.getItem('best_score');
-        elBestPlayer.innerText = `Best time - ${BestAllTimePlayer}`;
+    if (localStorage.getItem('best_time') != null) {
+        lastBestTime = localStorage.getItem('best_time');
+        elBestPlayer.innerText = `Best time - ${lastBestTime}`;
     }
 })()
 
@@ -190,7 +189,7 @@ const checkBestTime = () => {
     let allTimes = JSON.parse(localStorage.getItem('player_best'));
     allTimes.forEach(time => {
         if(time[1] === localStorage.getItem('best_time')) {
-            console.log(`Best time by ${time[0]} - ${time[1]}`);
+            console.log(`last best time by ${time[0]} - ${time[1]}`);
         }
         bestTime.push(time[1].replaceAll(" : ", ""));        
     })
@@ -198,6 +197,7 @@ const checkBestTime = () => {
     lastBestTime = bestTime[0].match(/.{1,2}/g);
     lastBestTime = `${lastBestTime[0]} : ${lastBestTime[1]} : ${lastBestTime[2]}`;
     localStorage.setItem('best_time', lastBestTime);
+    elBestPlayer.innerText = `Best time - ${lastBestTime}`
 }
 
 const startTimer = () => {
