@@ -12,12 +12,22 @@ body {
     linear-gradient(127deg, rgba(0,255,0,.8), rgba(0,255,0,0) 70.71%),
     linear-gradient(336deg, rgba(0,0,255,.8), rgba(0,0,255,0) 70.71%);
 }
+/* Game name and maybe more */
 header {
     color: white;
     text-align: center;
     border-bottom: 5px solid lightsalmon;
-    margin-bottom: 10vh;
+    margin-bottom: 4vh;
     padding: 1vh;
+}
+/* Player name and Stopper */
+.player-info {
+    display: flex;
+    color: whitesmoke;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 3vh;
+
 }
 /* START GAME */
 .menu {

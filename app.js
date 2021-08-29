@@ -3,12 +3,16 @@ const elMenu = document.querySelector('.menu');
 const elWin = document.querySelector('.win');
 const elBoard = document.querySelector('.board');
 
-const couplesCount = cards.length/2;
+let elPlayerName = document.querySelector('.p-name');
+let elPlayerTime = document.querySelector('.p-time');
+let lastPlayer;
+
+const couplesCount = cards.length / 2;
 let flippedCouplesCount = 0;
 
 const shuffle = (() => {
     cards.forEach(card => {
-        let randomPos = Math.floor(Math.random() *12);
+        let randomPos = Math.floor(Math.random() * 12);
         card.style.order = randomPos;
         card.addEventListener('click', flipCard);
     })
@@ -52,19 +56,11 @@ const checkForMatch = () => {
 const disableCards = () => {
     firstCard.removeEventListener('click', flipCard);
     secondCard.removeEventListener('click', flipCard);
-    
+
     soundCorrect.play();
     resetBoard();
     flippedCouplesCount++;
-    // Check if player finished flipping
-    if (couplesCount === flippedCouplesCount){
-        elMenu.classList.toggle('hidden');
-        elBoard.classList.toggle('transperent');
-        let elWinReview = document.querySelector('.winReview');
-        let elComplete = document.querySelector('.complete');
-        elWinReview.innerText = `Good!`;
-        elComplete.classList.remove('hidden');
-    }
+    checkForWin();
 }
 
 // Wrong card couple flipped, unflip.
@@ -89,7 +85,7 @@ const resetBoard = () => {
 // shuffle cards and start the game
 const playGame = () => {
     cards.forEach(card => {
-        let randomPos = Math.floor(Math.random() *12);
+        let randomPos = Math.floor(Math.random() * 12);
         card.style.order = randomPos;
         card.addEventListener('click', flipCard);
         if (card.classList.contains('flipped')) {
@@ -100,5 +96,49 @@ const playGame = () => {
     elMenu.classList.toggle('hidden');
     elBoard.classList.remove('transperent');
     flippedCouplesCount = 0;
+
+    savePlayer();
 }
+
+const LoadLastPlayer = (() => {
+    if (localStorage.getItem('last_player') === null) {
+        return;
+    }
+    else {
+        let lastPlayer = localStorage.getItem('last_player');
+        console.log(`Hello ${lastPlayer} :)`);
+        elPlayerName.innerText = lastPlayer;
+    }
+})()
+
+const savePlayer = () => {
+    let newPlayer = document.querySelector('#name-input').value;
+    if (localStorage.getItem('player_list') === null) {
+        localStorage.setItem('player_list', '[]');
+    }
+    let playerList = JSON.parse(localStorage.getItem('player_list'));
+    if (!playerList.includes(newPlayer)) {
+        playerList.push(newPlayer);
+        console.log(playerList);
+    }
+    localStorage.setItem('player_list', JSON.stringify(playerList));
+    elPlayerName.innerHTML = newPlayer;
+    lastPlayer = newPlayer;
+    localStorage.setItem('last_player', lastPlayer);
+}
+
+const checkForWin = () => {
+    if (couplesCount === flippedCouplesCount) {
+        elMenu.classList.toggle('hidden');
+        elBoard.classList.toggle('transperent');
+        let elWinReview = document.querySelector('.win-review');
+        const elComplete = document.querySelector('.switch-player');
+        const playBtn = document.querySelector('.play-btn');
+
+        elWinReview.innerText = `Good!`;
+        elComplete.classList.remove('hidden');
+        playBtn.innerText = 'Play Again';
+    }
+}
+
 
