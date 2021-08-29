@@ -3,9 +3,12 @@ const elMenu = document.querySelector('.menu');
 const elWin = document.querySelector('.win');
 const elBoard = document.querySelector('.board');
 
+let elBestPlayer = document.querySelector('.best-of-all');
 let elPlayerName = document.querySelector('.p-name');
 let elPlayerTime = document.querySelector('.p-time');
 let lastPlayer;
+let lastBestTime;
+let BestAllTimePlayer;
 let elInput = document.querySelector('#name-input');
 
 const couplesCount = cards.length / 2;
@@ -13,7 +16,7 @@ let flippedCouplesCount = 0;
 
 let isTimeStart = false;
 let tens = 00;
-let seconds = 00; 
+let seconds = 00;
 let minutes = 00;
 let appendTens = document.getElementById("tens");
 let appendSeconds = document.getElementById("seconds");
@@ -35,6 +38,19 @@ const shuffle = (() => {
     })
 })()
 
+const LoadLastPlayer = (() => {
+    if (localStorage.getItem('last_player') != null) {
+        lastPlayer = localStorage.getItem('last_player');
+        console.log(`Hello ${lastPlayer} :)`);
+        elPlayerName.innerText = lastPlayer;
+        elInput.value = lastPlayer;
+    }
+    if (localStorage.getItem('best_score') != null) {
+        BestAllTimePlayer = localStorage.getItem('best_score');
+        elBestPlayer.innerText = `Best time - ${BestAllTimePlayer}`;
+    }
+})()
+
 function flipCard() {
     if (lockBoard) return;
     if (this === firstCard) return;
@@ -42,7 +58,7 @@ function flipCard() {
         console.log('Timer Started');
         isTimeStart = true;
         clearInterval(Interval);
-        Interval = setInterval(startTimer, 10); 
+        Interval = setInterval(startTimer, 10);
     }
     this.classList.toggle('flipped');
     this.classList.toggle('face-down');
@@ -117,21 +133,12 @@ const playGame = () => {
     resetTimer();
 }
 
-const LoadLastPlayer = (() => {
-    if (localStorage.getItem('last_player') != null) {
-        let lastPlayer = localStorage.getItem('last_player');
-        console.log(`Hello ${lastPlayer} :)`);
-        elPlayerName.innerText = lastPlayer;
-        elInput.value = lastPlayer;
-    }
-})()
-
 const savePlayer = () => {
     let newPlayer = elInput.value;
     if (newPlayer.length === 0) {
         newPlayer = 'Player-1';
         console.log(`${newPlayer} is the default name`)
-    } 
+    }
     if (localStorage.getItem('player_list') === null) {
         localStorage.setItem('player_list', '[]');
     }
@@ -150,7 +157,7 @@ const checkForWin = () => {
     if (couplesCount === flippedCouplesCount) {
         isTimeStart = false;
         stopTimer();
-        console.log('Timer Stopped');
+        saveTime();
         elMenu.classList.toggle('hidden');
         elBoard.classList.toggle('transperent');
         let elWinReview = document.querySelector('.win-review');
@@ -163,33 +170,67 @@ const checkForWin = () => {
     }
 }
 
+const saveTime = () => {
+    let newTime = elPlayerTime.innerText;
+    console.log(`${lastPlayer} - ${newTime}`);
+
+    if (localStorage.getItem('player_best') === null) {
+        localStorage.setItem('player_best', '[]');
+    }
+    let playerBest = JSON.parse(localStorage.getItem('player_best'));
+
+    playerBest.push([lastPlayer, newTime]);
+    
+    localStorage.setItem('player_best', JSON.stringify(playerBest));
+    checkBestTime();
+}
+
+const checkBestTime = () => {
+    let bestTime = [];
+    let allTimes = JSON.parse(localStorage.getItem('player_best'));
+    allTimes.forEach(time => {
+        if(time[1] === localStorage.getItem('best_time')) {
+            console.log(`Best time by ${time[0]} - ${time[1]}`);
+        }
+        bestTime.push(time[1].replaceAll(" : ", ""));        
+    })
+    bestTime.sort();
+    lastBestTime = bestTime[0].match(/.{1,2}/g);
+    lastBestTime = `${lastBestTime[0]} : ${lastBestTime[1]} : ${lastBestTime[2]}`;
+    localStorage.setItem('best_time', lastBestTime);
+}
+
 const startTimer = () => {
-    tens++; 
-    
-    if(tens <= 9){
-      appendTens.innerHTML = "0" + tens;
+    tens++;
+
+    if (tens <= 9) {
+        appendTens.innerHTML = "0" + tens;
     }
-    
-    if (tens > 9){
-      appendTens.innerHTML = tens;
-      
-    } 
-    
+    if (tens > 9) {
+        appendTens.innerHTML = tens;
+    }
     if (tens > 99) {
-      console.log("seconds");
-      seconds++;
-      appendSeconds.innerHTML = "0" + seconds;
-      tens = 0;
-      appendTens.innerHTML = "0" + 0;
+        console.log("seconds");
+        seconds++;
+        appendSeconds.innerHTML = "0" + seconds;
+        tens = 0;
+        appendTens.innerHTML = "0" + 0;
     }
-    
-    if (seconds > 9){
-      appendSeconds.innerHTML = seconds;
+    if (seconds > 9) {
+        appendSeconds.innerHTML = seconds;
+    }
+    if (seconds > 59) {
+        console.log("minutes");
+        minutes++;
+        appendMinutes.innerHTML = "0" + minutes;
+        seconds = 0;
+        appendSeconds.innerHTML = "0" + 0;
     }
 }
 
 const stopTimer = () => {
     clearInterval(Interval);
+    console.log('Timer Stopped');
 }
 
 const resetTimer = () => {
