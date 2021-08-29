@@ -6,9 +6,26 @@ const elBoard = document.querySelector('.board');
 let elPlayerName = document.querySelector('.p-name');
 let elPlayerTime = document.querySelector('.p-time');
 let lastPlayer;
+let elInput = document.querySelector('#name-input');
 
 const couplesCount = cards.length / 2;
 let flippedCouplesCount = 0;
+
+let isTimeStart = false;
+let tens = 00;
+let seconds = 00; 
+let minutes = 00;
+let appendTens = document.getElementById("tens");
+let appendSeconds = document.getElementById("seconds");
+let appendMinutes = document.getElementById("minutes");
+let Interval;
+
+const soundCorrect = new Audio('sounds/correct.mp3');
+const soundUnflip = new Audio('sounds/unflip.mp3');
+
+let isFlippedCard = true;
+let lockBoard = false;
+let firstCard, secondCard;
 
 const shuffle = (() => {
     cards.forEach(card => {
@@ -18,16 +35,15 @@ const shuffle = (() => {
     })
 })()
 
-const soundCorrect = new Audio('sounds/correct.mp3');
-const soundUnflip = new Audio('sounds/unflip.mp3');
-
-let isFlippedCard = true;
-let lockBoard = false;
-let firstCard, secondCard;
-
 function flipCard() {
     if (lockBoard) return;
     if (this === firstCard) return;
+    if (!isTimeStart) {
+        console.log('Timer Started');
+        isTimeStart = true;
+        clearInterval(Interval);
+        Interval = setInterval(startTimer, 10); 
+    }
     this.classList.toggle('flipped');
     this.classList.toggle('face-down');
 
@@ -98,21 +114,24 @@ const playGame = () => {
     flippedCouplesCount = 0;
 
     savePlayer();
+    resetTimer();
 }
 
 const LoadLastPlayer = (() => {
-    if (localStorage.getItem('last_player') === null) {
-        return;
-    }
-    else {
+    if (localStorage.getItem('last_player') != null) {
         let lastPlayer = localStorage.getItem('last_player');
         console.log(`Hello ${lastPlayer} :)`);
         elPlayerName.innerText = lastPlayer;
+        elInput.value = lastPlayer;
     }
 })()
 
 const savePlayer = () => {
-    let newPlayer = document.querySelector('#name-input').value;
+    let newPlayer = elInput.value;
+    if (newPlayer.length === 0) {
+        newPlayer = 'Player-1';
+        console.log(`${newPlayer} is the default name`)
+    } 
     if (localStorage.getItem('player_list') === null) {
         localStorage.setItem('player_list', '[]');
     }
@@ -129,6 +148,9 @@ const savePlayer = () => {
 
 const checkForWin = () => {
     if (couplesCount === flippedCouplesCount) {
+        isTimeStart = false;
+        stopTimer();
+        console.log('Timer Stopped');
         elMenu.classList.toggle('hidden');
         elBoard.classList.toggle('transperent');
         let elWinReview = document.querySelector('.win-review');
@@ -139,6 +161,44 @@ const checkForWin = () => {
         elComplete.classList.remove('hidden');
         playBtn.innerText = 'Play Again';
     }
+}
+
+const startTimer = () => {
+    tens++; 
+    
+    if(tens <= 9){
+      appendTens.innerHTML = "0" + tens;
+    }
+    
+    if (tens > 9){
+      appendTens.innerHTML = tens;
+      
+    } 
+    
+    if (tens > 99) {
+      console.log("seconds");
+      seconds++;
+      appendSeconds.innerHTML = "0" + seconds;
+      tens = 0;
+      appendTens.innerHTML = "0" + 0;
+    }
+    
+    if (seconds > 9){
+      appendSeconds.innerHTML = seconds;
+    }
+}
+
+const stopTimer = () => {
+    clearInterval(Interval);
+}
+
+const resetTimer = () => {
+    tens = "00";
+    seconds = "00";
+    minutes = "00";
+    appendTens.innerHTML = tens;
+    appendSeconds.innerHTML = seconds;
+    appendMinutes.innerHTML = minutes;
 }
 
 

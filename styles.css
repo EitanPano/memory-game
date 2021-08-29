@@ -16,9 +16,10 @@ body {
 header {
     color: white;
     text-align: center;
-    border-bottom: 5px solid lightsalmon;
+    border-bottom: 5px solid rgba(255, 234, 139, 0.287);
     margin-bottom: 4vh;
     padding: 1vh;
+    text-shadow: 0 0 4px white;
 }
 /* Player name and Stopper */
 .player-info {
@@ -27,7 +28,6 @@ header {
     justify-content: center;
     align-items: center;
     margin-bottom: 3vh;
-
 }
 /* START GAME */
 .menu {
