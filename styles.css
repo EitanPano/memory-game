@@ -5,6 +5,7 @@
 }
 body {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    width: 100%;
     height: 100vh;
     background: 
     linear-gradient(217deg, rgba(255,0,0,.8), rgba(255,0,0,0) 70.71%),
@@ -17,6 +18,43 @@ header {
     border-bottom: 5px solid lightsalmon;
     margin-bottom: 10vh;
     padding: 1vh;
+}
+/* START GAME */
+.menu {
+    position: fixed;
+    z-index: 10;
+    height: 65%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-shadow: 0 0 10px black;
+    font-size: large;
+}
+.menu input, .menu label {
+    width: 200px;
+    height: 30px;
+    font-size: 24px;
+}
+.menu button {
+    position: fixed;
+    bottom: 7%;
+    left: calc(50% - 100px);
+    height: 45px ;
+    width: 200px;
+    font-size: large;
+    border-radius: 10px;
+    background-color: rgb(255, 211, 65);
+}
+/* GAME ITSELF */
+.transperent {
+    opacity: 50%;
+}
+.hidden {
+    visibility: hidden;
 }
 .board {
     margin: auto;
@@ -59,32 +97,4 @@ header {
 }
 .face-down .front {
     display: none;
-}
-
-/* Win Div */
-.win {
-    position: fixed;
-    top: calc(50% - 23vw);
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    visibility: hidden;
-}
-.win h1 {
-    font-size: 20vw;
-    text-align: center;
-    color: green;
-    margin-bottom: 18%;
-}
-.win button {
-    height: 45px ;
-    width: 50%;
-    max-width: 300px;
-    margin: auto;
-    font-size: large;
-    border-radius: 10px;
-    background-color: rgb(255, 211, 65);
-}
-.transperent {
-    opacity: 50%;
 }

@@ -1,4 +1,5 @@
 const cards = document.querySelectorAll('.card');
+const elMenu = document.querySelector('.menu');
 const elWin = document.querySelector('.win');
 const elBoard = document.querySelector('.board');
 
@@ -55,14 +56,18 @@ const disableCards = () => {
     soundCorrect.play();
     resetBoard();
     flippedCouplesCount++;
+    // Check if player finished flipping
     if (couplesCount === flippedCouplesCount){
-        console.log('You win');
-        elWin.style.visibility = 'visible';
+        elMenu.classList.toggle('hidden');
         elBoard.classList.toggle('transperent');
+        let elWinReview = document.querySelector('.winReview');
+        let elComplete = document.querySelector('.complete');
+        elWinReview.innerText = `Good!`;
+        elComplete.classList.remove('hidden');
     }
 }
 
-// Wrong couple flipped, unflip.
+// Wrong card couple flipped, unflip.
 const unflipCards = () => {
     lockBoard = true;
 
@@ -76,13 +81,13 @@ const unflipCards = () => {
         resetBoard();
     }, 1200)
 }
-
+// Reset all "let" variables
 const resetBoard = () => {
     [isFlippedCard, lockBoard] = [true, false];
     [firstCard, secondCard] = [null, null];
 }
-
-const playAgain = () => {
+// shuffle cards and start the game
+const playGame = () => {
     cards.forEach(card => {
         let randomPos = Math.floor(Math.random() *12);
         card.style.order = randomPos;
@@ -91,9 +96,9 @@ const playAgain = () => {
             card.classList.toggle('flipped');
             card.classList.toggle('face-down');
         }
-        elWin.style.visibility = 'hidden';
-        elBoard.classList.remove('transperent');
-        flippedCouplesCount = 0;
     })
+    elMenu.classList.toggle('hidden');
+    elBoard.classList.remove('transperent');
+    flippedCouplesCount = 0;
 }
 

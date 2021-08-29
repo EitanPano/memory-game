@@ -12,7 +12,20 @@
         <h1>Memory Game</h1>
     </header>
 
-    <section class="board">
+    <div class="menu">
+        <h1 class="winReview">Flip'em!</h1>
+        <br>
+        <p>Welcome to the "Programming memory game"</p>
+        <p>Enter your name to record the best time!</p>
+        <br>
+        <p class="complete hidden">Switch Player?</p>
+        <br>
+        <label for="">Name: </label>
+        <input type="text">
+        <button type="button" class="" onclick="playGame()">Start</button>
+    </div>
+
+    <section class="board transperent">
         <div class="card face-down" data-mark="1">
             <img class="front"src="images/html5.svg" alt="1">
             <img class="back" src="images/backbone.svg" alt="Logo">
@@ -63,10 +76,6 @@
         </div>
     </section>
 
-    <div class="win">
-        <h1>You Win</h1>
-        <button type="button" class="" onclick="playAgain()">Play Again</button>
-    </div>
 
     <script src="app.js"></script>
 </body>
