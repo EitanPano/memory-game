@@ -1,18 +1,23 @@
+// board and cards elements
 const cards = document.querySelectorAll('.card');
 const elMenu = document.querySelector('.menu');
 const elWin = document.querySelector('.win');
 const elBoard = document.querySelector('.board');
-
+// player and best time elements
 let elBestPlayer = document.querySelector('.best-of-all');
 let elPlayerName = document.querySelector('.p-name');
 let elPlayerTime = document.querySelector('.p-time');
+// saving data to localstorage
 let lastPlayer;
 let lastBestTime;
-let elInput = document.querySelector('#name-input');
-
+let elNameInput = document.querySelector('#name-input');
+// core game logic
 const couplesCount = cards.length / 2;
 let flippedCouplesCount = 0;
-
+let isFlippedCard = true;
+let lockBoard = false;
+let firstCard, secondCard;
+// time functions
 let isTimeStart = false;
 let tens = 00;
 let seconds = 00;
@@ -21,14 +26,11 @@ let appendTens = document.getElementById("tens");
 let appendSeconds = document.getElementById("seconds");
 let appendMinutes = document.getElementById("minutes");
 let Interval;
-
+// sounds
 const soundCorrect = new Audio('sounds/correct.mp3');
 const soundUnflip = new Audio('sounds/unflip.mp3');
 
-let isFlippedCard = true;
-let lockBoard = false;
-let firstCard, secondCard;
-
+// shuffle all cards and add click event to them
 const shuffle = (() => {
     cards.forEach(card => {
         let randomPos = Math.floor(Math.random() * 12);
@@ -36,20 +38,20 @@ const shuffle = (() => {
         card.addEventListener('click', flipCard);
     })
 })()
-
+// localstorage search "last_player" & "best_time" Keys  
 const LoadLastPlayer = (() => {
     if (localStorage.getItem('last_player') != null) {
         lastPlayer = localStorage.getItem('last_player');
         console.log(`Hello ${lastPlayer} :)`);
         elPlayerName.innerText = lastPlayer;
-        elInput.value = lastPlayer;
+        elNameInput.value = lastPlayer;
     }
     if (localStorage.getItem('best_time') != null) {
         lastBestTime = localStorage.getItem('best_time');
         elBestPlayer.innerText = `Best time - ${lastBestTime}`;
     }
 })()
-
+// flipping cards logic and functions
 function flipCard() {
     if (lockBoard) return;
     if (this === firstCard) return;
@@ -108,10 +110,28 @@ const unflipCards = () => {
         resetBoard();
     }, 1200)
 }
-// Reset all "let" variables
+// Reset core game logic variables
 const resetBoard = () => {
     [isFlippedCard, lockBoard] = [true, false];
     [firstCard, secondCard] = [null, null];
+}
+// check if player meets completion conditions
+const checkForWin = () => {
+    if (couplesCount === flippedCouplesCount) {
+        isTimeStart = false;
+        stopTimer();
+        savePlayer(lastPlayer);
+        saveTime();
+        elMenu.classList.toggle('hidden');
+        elBoard.classList.toggle('transperent');
+        let elWinReview = document.querySelector('.win-review');
+        const elComplete = document.querySelector('.switch-player');
+        const playBtn = document.querySelector('.play-btn');
+
+        elWinReview.innerText = `Good!`;
+        elComplete.classList.remove('hidden');
+        playBtn.innerText = 'Play Again';
+    }
 }
 // shuffle cards and start the game
 const playGame = () => {
@@ -128,46 +148,47 @@ const playGame = () => {
     elBoard.classList.remove('transperent');
     flippedCouplesCount = 0;
 
-    savePlayer();
+    getPlayer();
     resetTimer();
 }
 
-const savePlayer = () => {
-    let newPlayer = elInput.value;
+const getPlayer = () => {
+    let newPlayer = elNameInput.value;
     if (newPlayer.length === 0) {
         newPlayer = 'Player-1';
         console.log(`${newPlayer} is the default name`)
     }
-    if (localStorage.getItem('player_list') === null) {
-        localStorage.setItem('player_list', '[]');
-    }
-    let playerList = JSON.parse(localStorage.getItem('player_list'));
-    if (!playerList.includes(newPlayer)) {
-        playerList.push(newPlayer);
-        console.log(playerList);
-    }
-    localStorage.setItem('player_list', JSON.stringify(playerList));
     elPlayerName.innerHTML = newPlayer;
     lastPlayer = newPlayer;
     localStorage.setItem('last_player', lastPlayer);
 }
 
-const checkForWin = () => {
-    if (couplesCount === flippedCouplesCount) {
-        isTimeStart = false;
-        stopTimer();
-        saveTime();
-        elMenu.classList.toggle('hidden');
-        elBoard.classList.toggle('transperent');
-        let elWinReview = document.querySelector('.win-review');
-        const elComplete = document.querySelector('.switch-player');
-        const playBtn = document.querySelector('.play-btn');
+const savePlayer = (playerName) => {
+    if (localStorage.getItem('player_list') === null) {
+        localStorage.setItem('player_list', '[]');
+    }
+    let playerList = JSON.parse(localStorage.getItem('player_list'));
 
-        elWinReview.innerText = `Good!`;
-        elComplete.classList.remove('hidden');
-        playBtn.innerText = 'Play Again';
+    let currentPlayer = playerList.filter((player) => {
+        return player.Name === lastPlayer;
+    })
+    if (playerList.some(player => player.Name === playerName)) {
+        alert("Object found Compare Times and append");
+        console.log(currentPlayer);
+        
+    }
+    else {
+        alert('Didnt find any object, Create one');
+        playerList.push(
+            {
+                "Name" : playerName,
+                "Time" : "00 : 55 : 55"
+            });
+            console.log(playerList);
+            localStorage.setItem('player_list', JSON.stringify(playerList));
     }
 }
+
 
 const saveTime = () => {
     let newTime = elPlayerTime.innerText;
