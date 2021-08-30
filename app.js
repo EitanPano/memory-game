@@ -177,9 +177,8 @@ const saveTime = () => {
         localStorage.setItem('player_best', '[]');
     }
     let playerBest = JSON.parse(localStorage.getItem('player_best'));
-
     playerBest.push([lastPlayer, newTime]);
-    
+    playerBest.sort();
     localStorage.setItem('player_best', JSON.stringify(playerBest));
     checkBestTime();
 }
