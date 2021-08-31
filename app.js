@@ -121,7 +121,7 @@ const checkForWin = () => {
         isTimeStart = false;
         stopTimer();
         savePlayer(lastPlayer);
-        saveTime();
+        checkBestTime();
         elMenu.classList.toggle('hidden');
         elBoard.classList.toggle('transperent');
         let elWinReview = document.querySelector('.win-review');
@@ -168,53 +168,44 @@ const savePlayer = (playerName) => {
         localStorage.setItem('player_list', '[]');
     }
     let playerList = JSON.parse(localStorage.getItem('player_list'));
-
-    let currentPlayer = playerList.filter((player) => {
-        return player.Name === lastPlayer;
-    })
-    if (playerList.some(player => player.Name === playerName)) {
-        alert("Object found Compare Times and append");
-        console.log(currentPlayer);
-        
+    let currentPlayer = playerList.find(player => player.name === playerName);
+    if (currentPlayer) {
+        let oldTime = currentPlayer.time.replaceAll(" : ", "");
+        let newTime = elPlayerTime.innerText.replaceAll(" : ", "");
+        if (newTime < oldTime) {
+            console.log('New best score, replaced with previous score');
+            newTime = newTime.match(/.{1,2}/g);
+            newTime = `${newTime[0]} : ${newTime[1]} : ${newTime[2]}`
+            currentPlayer.time = newTime;
+            console.log(currentPlayer);
+            localStorage.setItem('player_list', JSON.stringify(playerList));
+        }
+        else {
+            console.log('Your previous score was better, Keep trying :)');
+            return;
+        }
     }
     else {
-        alert('Didnt find any object, Create one');
+        console.log(`Player not found, Creating player "${playerName}"`);
         playerList.push(
             {
-                "Name" : playerName,
-                "Time" : "00 : 55 : 55"
+                "name": playerName,
+                "time": elPlayerTime.innerText
             });
-            console.log(playerList);
-            localStorage.setItem('player_list', JSON.stringify(playerList));
+        localStorage.setItem('player_list', JSON.stringify(playerList));
     }
 }
 
-
-const saveTime = () => {
-    let newTime = elPlayerTime.innerText;
-    console.log(`${lastPlayer} - ${newTime}`);
-
-    if (localStorage.getItem('player_best') === null) {
-        localStorage.setItem('player_best', '[]');
-    }
-    let playerBest = JSON.parse(localStorage.getItem('player_best'));
-    playerBest.push([lastPlayer, newTime]);
-    playerBest.sort();
-    localStorage.setItem('player_best', JSON.stringify(playerBest));
-    checkBestTime();
-}
 
 const checkBestTime = () => {
-    let bestTime = [];
-    let allTimes = JSON.parse(localStorage.getItem('player_best'));
-    allTimes.forEach(time => {
-        if(time[1] === localStorage.getItem('best_time')) {
-            console.log(`last best time by ${time[0]} - ${time[1]}`);
-        }
-        bestTime.push(time[1].replaceAll(" : ", ""));        
-    })
-    bestTime.sort();
-    lastBestTime = bestTime[0].match(/.{1,2}/g);
+    let playerList = JSON.parse(localStorage.getItem('player_list'));
+    let allTimes = playerList.map(player => player.time);
+    let sortedTimes = [];
+
+    allTimes.forEach(time => sortedTimes.push(time.replaceAll(" : ", "")));
+
+    sortedTimes.sort();
+    lastBestTime = sortedTimes[0].match(/.{1,2}/g);
     lastBestTime = `${lastBestTime[0]} : ${lastBestTime[1]} : ${lastBestTime[2]}`;
     localStorage.setItem('best_time', lastBestTime);
     elBestPlayer.innerText = `Best time - ${lastBestTime}`
@@ -222,25 +213,16 @@ const checkBestTime = () => {
 
 const startTimer = () => {
     tens++;
-
-    if (tens <= 9) {
-        appendTens.innerHTML = "0" + tens;
-    }
-    if (tens > 9) {
-        appendTens.innerHTML = tens;
-    }
+    if (tens <= 9) appendTens.innerHTML = "0" + tens;
+    if (tens > 9) appendTens.innerHTML = tens;
     if (tens > 99) {
-        console.log("seconds");
         seconds++;
         appendSeconds.innerHTML = "0" + seconds;
         tens = 0;
         appendTens.innerHTML = "0" + 0;
     }
-    if (seconds > 9) {
-        appendSeconds.innerHTML = seconds;
-    }
+    if (seconds > 9) appendSeconds.innerHTML = seconds;
     if (seconds > 59) {
-        console.log("minutes");
         minutes++;
         appendMinutes.innerHTML = "0" + minutes;
         seconds = 0;
